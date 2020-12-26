@@ -1,4 +1,5 @@
 <template>
+
   <div class="content">
     <div class="content-main">
       <div class="content-main-top">
@@ -43,10 +44,17 @@
         <div class="content-main-top-btn">
           <el-button type="primary" @click="Search()">查询</el-button>
           <el-button type="primary" @click="add()">新增</el-button>
-          <el-button type="primary" @click="">导入</el-button>
-          <el-button type="primary" @click="">导出</el-button>
+<!--          <el-button type="primary" @click="">导出</el-button>-->
           <!--          <el-button type="primary">新增</el-button>-->
         </div>
+        <excel-import :on-success="onSuccess">
+          <div class="import-btn">导入</div>
+        </excel-import>
+        <!-- 点击导出 -->
+        <excel-export :bookType="bookType" :filename="filename" :sheet="sheet" :on-error="onError" :manual="false" :beforeStart="exportTable">
+<!--          <div class="export-btn" >导出</div>-->
+          <div class="export-btn">导出</div>
+        </excel-export>
       </div>
       <div class="content-main-table">
         <el-table
@@ -150,15 +158,189 @@
 <script>
 
   import {getAll, getAllByPage, timeTransfer} from "../../../common/js/getter";
-
+  import {ExcelImport,ExcelExport} from 'pikaz-excel-js'
+  // import {ExcelExport} from '../../../plugin'
     export default {
+      components: {
+        ExcelImport,
+        ExcelExport,
+      },
         name: "",
-
         data(){
           return{
             total:0,
-            // pagesize:10,
-            // currentPage:1,
+            json:'',
+
+            bookType: 'xlsx',
+            filename: '工时统计系统',
+            sheet: [
+              {
+                // title: '插件信息',
+                tHeader: ['No.', '开发人员', '需求单号|任务单号|事件单号|协查单号(部门流程平台中单号,确实没有单号可不填)', '提出工程点或统一版本',
+                '标题(必填)(有单号与部门流程平台中一致；无单号请说明具体事项)','状态(按时完成、超时完成、进行中……)','任务类型(统一版本、现地开发、测试、问题协查、共通事项……)',
+                '任务内容(有单号与部门流程平台中一致；无单号请说明具体事项)','实际开始时间(日期)','实际结束时间(日期)','实际工作量(单位：人时)',
+                '备注'],
+                table: [{
+                  id: '1',
+                  developer: '许许许',
+                  servNo: '',
+                  engineePoint:'云管平台',
+                  title:'apm es查询支持分片可配置',
+                  status:'按时完成',
+                  type:'统一版本',
+                  content:'apm es查询支持分片可配置',
+                  beginTime: '2020-12-23',
+                  endTime: '2020-12-26',
+                  workLoad: '1',
+                  remarks: ''
+                }],
+                // table:this.tableData,
+                keys: ['id', 'developer', 'servNo', 'engineePoint','title','status','type','content',
+                  'beginTime','endTime','workLoad','remarks'],
+                sheetName: '全部组',
+                globalStyle: {
+                    alignment: {
+                      wrapText: true, //字体颜色 橙色
+                    },
+
+                },
+                cellStyle: [
+                  //定义每个单元格的格式
+                  {
+                    cell: 'A1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'B1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'C1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'D1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'E1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'F1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'G1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },{
+                    cell: 'H1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'I1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'J1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'K1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'L1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  }
+                ]
+              },
+            ],
+            toExport:[],
             search:{
               beginTime:'',
               endTime:'',
@@ -208,15 +390,69 @@
                 label: "业务监控组",
               }
             ],
-            tableData: []
+            tableData: [],
+
           }
         },
       methods:{
+        /**
+         * @name: 导入成功
+         * @param {Array} response/生导入数据
+         * @param {Object} file/导入文件
+         * @return:
+         */
+        onSuccess (response, file) {
 
+          // this.json = JSON.stringify(response)
+          this.json = response[0].data
+          for(var i = 0;i<this.json.length;i++){
+            this.json[i] = JSON.parse(JSON.stringify(this.json[i])
+                .replace('No.','id')
+                .replace('开发人员','developer')
+                .replace('需求单号|任务单号|事件单号|协查单号(部门流程平台中单号,确实没有单号可不填)','servNo')
+                .replace('提出工程点或统一版本','engineePoint')
+                .replace('标题(必填)(有单号与部门流程平台中一致；无单号请说明具体事项)','title')
+                .replace('状态(按时完成、超时完成、进行中……)','status')
+                .replace('任务类型(统一版本、现地开发、测试、问题协查、共通事项……)','type')
+                .replace('任务内容(有单号与部门流程平台中一致；无单号请说明具体事项)','content')
+                .replace('实际开始时间(日期)','beginTime')
+                .replace('实际结束时间(日期)','endTime')
+                .replace('实际工作量(单位：人时)','workLoad')
+                .replace('备注','remarks'))
+          }
+          // this.JsonTransfer(this.json)
+          console.log(this.json)
+          this.tableData = this.json
+        },
+        /**
+         * @name: 导出错误
+         * @param {String} err/错误信息
+         * @return:
+         */
+        onError (err) {
+          console.log(err)
+        },
+        /**
+         * @name: 手动导出
+         * @param {type}
+         * @return:
+         */
+        exportTable () {
+          console.log(this.toExport)
+          this.sheet[0].table = this.toExport
+        },
+        /**
+         * 解析excel，返回的json的key为中文。需要进行转换
+         * @constructor
+         */
+        JsonTransfer(arrays){
+
+        },
         getAll(){
           getAll().then(res=>{
             console.log(res.data)
-            this.tableData = res.data
+            this.toExport = res.data
+            // this.tableData = res.data
           })
         },
         add(){
@@ -276,6 +512,7 @@
           getAllByPage(pageNo).then(res=>{
             console.log(res.data.list)
             this.tableData = res.data.list
+            // this.sheet[0].table = res.data.list
             this.total = res.data.total
           })
         },
@@ -285,7 +522,7 @@
         //=============分页===================
       },
       created() {
-        // this.getAll()
+        this.getAll()
         // window.localStorage.removeItem('currentRow')
         this.PageAxios(1)
       }
@@ -356,6 +593,38 @@
       float: left;
       margin-top: 5px;
     }
+  }
+
+  .export-demo {
+    display: flex;
+    justify-content: space-between;
+  }
+  .export-btn {
+    margin-left: 10px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 36px;
+    background: #20A0FF;
+    border-radius: 5px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .import-btn {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 36px;
+    background: #20A0FF;
+    border-radius: 5px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
   }
 
 </style>

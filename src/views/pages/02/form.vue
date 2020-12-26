@@ -101,14 +101,14 @@
           beginTime:'',
           endTime:'',
           developer: '',
-          servNo: '',
+          servNo: ' ',
           engineePoint:'',
           title: '',
           status: '',
           type: '',
           content: '',
           workLoad: '',
-          remarks:'',
+          remarks:' ',
           group:''
         },
         options5: [{
