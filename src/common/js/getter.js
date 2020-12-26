@@ -14,9 +14,9 @@ export function getAllByPage(pageNo){
   })
 }
 //条件搜索
-export function search(search){
+export function search(group){
   return request({
-    url: '/search'+search
+    url: '/search/'+group
   })
 }
 

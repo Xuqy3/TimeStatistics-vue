@@ -44,17 +44,39 @@
         <div class="content-main-top-btn">
           <el-button type="primary" @click="Search()">查询</el-button>
           <el-button type="primary" @click="add()">新增</el-button>
-<!--          <el-button type="primary" @click="">导出</el-button>-->
+          <el-button type="primary" @click="dialogFormVisible=true">导入</el-button>
           <!--          <el-button type="primary">新增</el-button>-->
         </div>
-        <excel-import :on-success="onSuccess">
-          <div class="import-btn">导入</div>
-        </excel-import>
+<!--        <excel-import :on-success="onSuccess">-->
+<!--          <div class="import-btn">导入</div>-->
+<!--        </excel-import>-->
         <!-- 点击导出 -->
-        <excel-export :bookType="bookType" :filename="filename" :sheet="sheet" :on-error="onError" :manual="false" :beforeStart="exportTable">
+        <excel-export :bookType="bookType" :filename="filename" :sheet="sheet" :on-error="onError">
 <!--          <div class="export-btn" >导出</div>-->
           <div class="export-btn">导出</div>
         </excel-export>
+        <el-dialog title="选择导入的小组" :visible.sync="dialogFormVisible" style="width: 50%;margin-left: 25%">
+          <el-form :rules="rules">
+            <el-form-item label="组别" label-width="120px" >
+              <el-select v-model="importGroup" placeholder="选择导入的小组">
+                <el-option label="平台监控组前台" value="平台监控组前台"></el-option>
+                <el-option label="前端组" value="前端组"></el-option>
+                <el-option label="平台监控组后台" value="平台监控组后台"></el-option>
+                <el-option label="智能引擎组" value="智能引擎组"></el-option>
+                <el-option label="测试组" value="测试组"></el-option>
+                <el-option label="产品组" value="产品组"></el-option>
+                <el-option label="业务监控组" value="业务监控组"></el-option>
+                <el-option label="支撑组" value="支撑组"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <excel-import :on-success="onSuccess" style="float: right;margin-left: 2%;margin-right: 5%">
+              <div class="chooseFile" style="width: 150%">选择文件</div>
+            </excel-import>
+          </div>
+        </el-dialog>
       </div>
       <div class="content-main-table">
         <el-table
@@ -157,17 +179,19 @@
 
 <script>
 
-  import {getAll, getAllByPage, timeTransfer} from "../../../common/js/getter";
+import {getAll, getAllByPage, search, timeTransfer} from "../../../common/js/getter";
   import {ExcelImport,ExcelExport} from 'pikaz-excel-js'
-  // import {ExcelExport} from '../../../plugin'
     export default {
       components: {
         ExcelImport,
         ExcelExport,
       },
         name: "",
+
         data(){
           return{
+            importGroup:'平台监控组前台',
+            dialogFormVisible:false,
             total:0,
             json:'',
 
@@ -197,11 +221,1166 @@
                 // table:this.tableData,
                 keys: ['id', 'developer', 'servNo', 'engineePoint','title','status','type','content',
                   'beginTime','endTime','workLoad','remarks'],
-                sheetName: '全部组',
+                sheetName: '平台监控组前台',
                 globalStyle: {
                     alignment: {
                       wrapText: true, //字体颜色 橙色
                     },
+
+                },
+                cellStyle: [
+                  //定义每个单元格的格式
+                  {
+                    cell: 'A1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'B1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'C1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'D1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'E1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'F1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'G1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },{
+                    cell: 'H1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'I1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'J1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'K1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'L1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  }
+                ]
+              },
+              {
+                // title: '插件信息',
+                tHeader: ['No.', '开发人员', '需求单号|任务单号|事件单号|协查单号(部门流程平台中单号,确实没有单号可不填)', '提出工程点或统一版本',
+                  '标题(必填)(有单号与部门流程平台中一致；无单号请说明具体事项)','状态(按时完成、超时完成、进行中……)','任务类型(统一版本、现地开发、测试、问题协查、共通事项……)',
+                  '任务内容(有单号与部门流程平台中一致；无单号请说明具体事项)','实际开始时间(日期)','实际结束时间(日期)','实际工作量(单位：人时)',
+                  '备注'],
+                table: [{
+                  id: '1',
+                  developer: '许许许',
+                  servNo: '',
+                  engineePoint:'云管平台',
+                  title:'apm es查询支持分片可配置',
+                  status:'按时完成',
+                  type:'统一版本',
+                  content:'apm es查询支持分片可配置',
+                  beginTime: '2020-12-23',
+                  endTime: '2020-12-26',
+                  workLoad: '1',
+                  remarks: ''
+                }],
+                // table:this.tableData,
+                keys: ['id', 'developer', 'servNo', 'engineePoint','title','status','type','content',
+                  'beginTime','endTime','workLoad','remarks'],
+                sheetName: '前端组',
+                globalStyle: {
+                  alignment: {
+                    wrapText: true, //字体颜色 橙色
+                  },
+
+                },
+                cellStyle: [
+                  //定义每个单元格的格式
+                  {
+                    cell: 'A1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'B1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'C1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'D1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'E1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'F1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'G1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },{
+                    cell: 'H1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'I1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'J1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'K1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'L1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  }
+                ]
+              },
+              {
+                // title: '插件信息',
+                tHeader: ['No.', '开发人员', '需求单号|任务单号|事件单号|协查单号(部门流程平台中单号,确实没有单号可不填)', '提出工程点或统一版本',
+                  '标题(必填)(有单号与部门流程平台中一致；无单号请说明具体事项)','状态(按时完成、超时完成、进行中……)','任务类型(统一版本、现地开发、测试、问题协查、共通事项……)',
+                  '任务内容(有单号与部门流程平台中一致；无单号请说明具体事项)','实际开始时间(日期)','实际结束时间(日期)','实际工作量(单位：人时)',
+                  '备注'],
+                table: [{
+                  id: '1',
+                  developer: '许许许',
+                  servNo: '',
+                  engineePoint:'云管平台',
+                  title:'apm es查询支持分片可配置',
+                  status:'按时完成',
+                  type:'统一版本',
+                  content:'apm es查询支持分片可配置',
+                  beginTime: '2020-12-23',
+                  endTime: '2020-12-26',
+                  workLoad: '1',
+                  remarks: ''
+                }],
+                // table:this.tableData,
+                keys: ['id', 'developer', 'servNo', 'engineePoint','title','status','type','content',
+                  'beginTime','endTime','workLoad','remarks'],
+                sheetName: '平台监控组后台',
+                globalStyle: {
+                  alignment: {
+                    wrapText: true, //字体颜色 橙色
+                  },
+
+                },
+                cellStyle: [
+                  //定义每个单元格的格式
+                  {
+                    cell: 'A1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'B1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'C1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'D1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'E1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'F1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'G1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },{
+                    cell: 'H1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'I1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'J1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'K1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'L1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  }
+                ]
+              },
+              {
+                // title: '插件信息',
+                tHeader: ['No.', '开发人员', '需求单号|任务单号|事件单号|协查单号(部门流程平台中单号,确实没有单号可不填)', '提出工程点或统一版本',
+                  '标题(必填)(有单号与部门流程平台中一致；无单号请说明具体事项)','状态(按时完成、超时完成、进行中……)','任务类型(统一版本、现地开发、测试、问题协查、共通事项……)',
+                  '任务内容(有单号与部门流程平台中一致；无单号请说明具体事项)','实际开始时间(日期)','实际结束时间(日期)','实际工作量(单位：人时)',
+                  '备注'],
+                table: [{
+                  id: '1',
+                  developer: '许许许',
+                  servNo: '',
+                  engineePoint:'云管平台',
+                  title:'apm es查询支持分片可配置',
+                  status:'按时完成',
+                  type:'统一版本',
+                  content:'apm es查询支持分片可配置',
+                  beginTime: '2020-12-23',
+                  endTime: '2020-12-26',
+                  workLoad: '1',
+                  remarks: ''
+                }],
+                // table:this.tableData,
+                keys: ['id', 'developer', 'servNo', 'engineePoint','title','status','type','content',
+                  'beginTime','endTime','workLoad','remarks'],
+                sheetName: '智能引擎组',
+                globalStyle: {
+                  alignment: {
+                    wrapText: true, //字体颜色 橙色
+                  },
+
+                },
+                cellStyle: [
+                  //定义每个单元格的格式
+                  {
+                    cell: 'A1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'B1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'C1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'D1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'E1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'F1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'G1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },{
+                    cell: 'H1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'I1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'J1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'K1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'L1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  }
+                ]
+              },
+              {
+                // title: '插件信息',
+                tHeader: ['No.', '开发人员', '需求单号|任务单号|事件单号|协查单号(部门流程平台中单号,确实没有单号可不填)', '提出工程点或统一版本',
+                  '标题(必填)(有单号与部门流程平台中一致；无单号请说明具体事项)','状态(按时完成、超时完成、进行中……)','任务类型(统一版本、现地开发、测试、问题协查、共通事项……)',
+                  '任务内容(有单号与部门流程平台中一致；无单号请说明具体事项)','实际开始时间(日期)','实际结束时间(日期)','实际工作量(单位：人时)',
+                  '备注'],
+                table: [{
+                  id: '1',
+                  developer: '许许许',
+                  servNo: '',
+                  engineePoint:'云管平台',
+                  title:'apm es查询支持分片可配置',
+                  status:'按时完成',
+                  type:'统一版本',
+                  content:'apm es查询支持分片可配置',
+                  beginTime: '2020-12-23',
+                  endTime: '2020-12-26',
+                  workLoad: '1',
+                  remarks: ''
+                }],
+                // table:this.tableData,
+                keys: ['id', 'developer', 'servNo', 'engineePoint','title','status','type','content',
+                  'beginTime','endTime','workLoad','remarks'],
+                sheetName: '测试组',
+                globalStyle: {
+                  alignment: {
+                    wrapText: true, //字体颜色 橙色
+                  },
+
+                },
+                cellStyle: [
+                  //定义每个单元格的格式
+                  {
+                    cell: 'A1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'B1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'C1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'D1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'E1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'F1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'G1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },{
+                    cell: 'H1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'I1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'J1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'K1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'L1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  }
+                ]
+              },
+              {
+                // title: '插件信息',
+                tHeader: ['No.', '开发人员', '需求单号|任务单号|事件单号|协查单号(部门流程平台中单号,确实没有单号可不填)', '提出工程点或统一版本',
+                  '标题(必填)(有单号与部门流程平台中一致；无单号请说明具体事项)','状态(按时完成、超时完成、进行中……)','任务类型(统一版本、现地开发、测试、问题协查、共通事项……)',
+                  '任务内容(有单号与部门流程平台中一致；无单号请说明具体事项)','实际开始时间(日期)','实际结束时间(日期)','实际工作量(单位：人时)',
+                  '备注'],
+                table: [{
+                  id: '1',
+                  developer: '许许许',
+                  servNo: '',
+                  engineePoint:'云管平台',
+                  title:'apm es查询支持分片可配置',
+                  status:'按时完成',
+                  type:'统一版本',
+                  content:'apm es查询支持分片可配置',
+                  beginTime: '2020-12-23',
+                  endTime: '2020-12-26',
+                  workLoad: '1',
+                  remarks: ''
+                }],
+                // table:this.tableData,
+                keys: ['id', 'developer', 'servNo', 'engineePoint','title','status','type','content',
+                  'beginTime','endTime','workLoad','remarks'],
+                sheetName: '产品组',
+                globalStyle: {
+                  alignment: {
+                    wrapText: true, //字体颜色 橙色
+                  },
+
+                },
+                cellStyle: [
+                  //定义每个单元格的格式
+                  {
+                    cell: 'A1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'B1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'C1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'D1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'E1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'F1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'G1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },{
+                    cell: 'H1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'I1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'J1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'K1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'L1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  }
+                ]
+              },
+              {
+                // title: '插件信息',
+                tHeader: ['No.', '开发人员', '需求单号|任务单号|事件单号|协查单号(部门流程平台中单号,确实没有单号可不填)', '提出工程点或统一版本',
+                  '标题(必填)(有单号与部门流程平台中一致；无单号请说明具体事项)','状态(按时完成、超时完成、进行中……)','任务类型(统一版本、现地开发、测试、问题协查、共通事项……)',
+                  '任务内容(有单号与部门流程平台中一致；无单号请说明具体事项)','实际开始时间(日期)','实际结束时间(日期)','实际工作量(单位：人时)',
+                  '备注'],
+                table: [{
+                  id: '1',
+                  developer: '许许许',
+                  servNo: '',
+                  engineePoint:'云管平台',
+                  title:'apm es查询支持分片可配置',
+                  status:'按时完成',
+                  type:'统一版本',
+                  content:'apm es查询支持分片可配置',
+                  beginTime: '2020-12-23',
+                  endTime: '2020-12-26',
+                  workLoad: '1',
+                  remarks: ''
+                }],
+                // table:this.tableData,
+                keys: ['id', 'developer', 'servNo', 'engineePoint','title','status','type','content',
+                  'beginTime','endTime','workLoad','remarks'],
+                sheetName: '业务监控组',
+                globalStyle: {
+                  alignment: {
+                    wrapText: true, //字体颜色 橙色
+                  },
+
+                },
+                cellStyle: [
+                  //定义每个单元格的格式
+                  {
+                    cell: 'A1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'B1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'C1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'D1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'E1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'F1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'G1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },{
+                    cell: 'H1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'I1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'J1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'K1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: false,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  },
+                  {
+                    cell: 'L1',
+                    font: {
+                      sz: 14,
+                      color: { rgb: "000000" },//字体颜色 白色
+                      bold: true,
+                    },
+                    fill: {
+                      fgColor: { rgb: "FABF8F" },//背景颜色 橙色
+                    }
+                  }
+                ]
+              },
+              {
+                // title: '插件信息',
+                tHeader: ['No.', '开发人员', '需求单号|任务单号|事件单号|协查单号(部门流程平台中单号,确实没有单号可不填)', '提出工程点或统一版本',
+                  '标题(必填)(有单号与部门流程平台中一致；无单号请说明具体事项)','状态(按时完成、超时完成、进行中……)','任务类型(统一版本、现地开发、测试、问题协查、共通事项……)',
+                  '任务内容(有单号与部门流程平台中一致；无单号请说明具体事项)','实际开始时间(日期)','实际结束时间(日期)','实际工作量(单位：人时)',
+                  '备注'],
+                table: [{
+                  id: '1',
+                  developer: '许许许',
+                  servNo: '',
+                  engineePoint:'云管平台',
+                  title:'apm es查询支持分片可配置',
+                  status:'按时完成',
+                  type:'统一版本',
+                  content:'apm es查询支持分片可配置',
+                  beginTime: '2020-12-23',
+                  endTime: '2020-12-26',
+                  workLoad: '1',
+                  remarks: ''
+                }],
+                // table:this.tableData,
+                keys: ['id', 'developer', 'servNo', 'engineePoint','title','status','type','content',
+                  'beginTime','endTime','workLoad','remarks'],
+                sheetName: '支撑组',
+                globalStyle: {
+                  alignment: {
+                    wrapText: true, //字体颜色 橙色
+                  },
 
                 },
                 cellStyle: [
@@ -388,24 +1567,47 @@
               {
                 value: "业务监控组",
                 label: "业务监控组",
+              },
+              {
+                value: "支撑组",
+                label: "支撑组",
               }
             ],
             tableData: [],
-
+            rules:{
+              importGroup: [
+                { required: true, message: '请选择组别', trigger: 'blur' }
+              ],
+            }
           }
         },
       methods:{
         /**
-         * @name: 导入成功
+         * @name: 导入成功,excel产生的json的key都为中文，需要进行替换
          * @param {Array} response/生导入数据
          * @param {Object} file/导入文件
          * @return:
          */
         onSuccess (response, file) {
+          this.dialogFormVisible = false
+          console.log(response)
+          this.json = response
 
-          // this.json = JSON.stringify(response)
-          this.json = response[0].data
+          console.log(this.json)
+          //给每个sheet中添加一个当前要导出的组别，以便在filter中引用这个属性
+          for (var i=0;i<this.json.length;i++){
+            this.json[i].importGroup = this.importGroup
+          }
+          console.log(this.json)
+          var temp = this.json.filter(function (fp){
+            console.log(fp.importGroup)
+            return fp.sheetName === fp.importGroup
+
+          })
+          console.log(temp)
+          this.json = temp[0].data
           for(var i = 0;i<this.json.length;i++){
+            this.json[i].group = this.importGroup
             this.json[i] = JSON.parse(JSON.stringify(this.json[i])
                 .replace('No.','id')
                 .replace('开发人员','developer')
@@ -420,8 +1622,8 @@
                 .replace('实际工作量(单位：人时)','workLoad')
                 .replace('备注','remarks'))
           }
-          // this.JsonTransfer(this.json)
           console.log(this.json)
+          // this.tableData.group='平台监控组后台'
           this.tableData = this.json
         },
         /**
@@ -438,21 +1640,46 @@
          * @return:
          */
         exportTable () {
-          console.log(this.toExport)
-          this.sheet[0].table = this.toExport
-        },
-        /**
-         * 解析excel，返回的json的key为中文。需要进行转换
-         * @constructor
-         */
-        JsonTransfer(arrays){
-
+          //==================可以=============
+          // console.log(this.toExport)
+          // this.sheet[0].table = this.toExport
+          //==================可以=============
+          // getAll().then(res=>{
+          //   console.log(res.data)
+          //   this.sheet[0].table = res.data
+          // })
         },
         getAll(){
           getAll().then(res=>{
             console.log(res.data)
-            this.toExport = res.data
+            // this.toExport = res.data
             // this.tableData = res.data
+          })
+        },
+        tableGet(){
+          search('平台监控组前台').then(res=>{
+            this.sheet[0].table = res.data
+          })
+          search('前端组').then(res=>{
+            this.sheet[1].table = res.data
+          })
+          search('平台监控组后台').then(res=>{
+            this.sheet[2].table = res.data
+          })
+          search('智能引擎组').then(res=>{
+            this.sheet[3].table = res.data
+          })
+          search('测试组').then(res=>{
+            this.sheet[4].table = res.data
+          })
+          search('产品组').then(res=>{
+            this.sheet[5].table = res.data
+          })
+          search('业务监控组').then(res=>{
+            this.sheet[6].table = res.data
+          })
+          search('支撑组').then(res=>{
+            this.sheet[7].table = res.data
           })
         },
         add(){
@@ -473,10 +1700,6 @@
           console.log(this.search)
           this.search.beginTime = timeTransfer(this.search.beginTime)
           this.search.endTime = timeTransfer(this.search.endTime)
-
-          // search(this.search).then(res=>{
-          //   this.tableData = res.data
-          // })
           this.$axios.post('/search',this.search).then(res=>{
             console.log(res.data.data)
             this.tableData = res.data.data
@@ -522,7 +1745,8 @@
         //=============分页===================
       },
       created() {
-        this.getAll()
+        this.tableGet()
+        // this.getAll()
         // window.localStorage.removeItem('currentRow')
         this.PageAxios(1)
       }
@@ -614,6 +1838,19 @@
     font-size: 14px;
   }
   .import-btn {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 36px;
+    background: #20A0FF;
+    border-radius: 5px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .chooseFile {
     margin-top: 10px;
     display: flex;
     justify-content: center;

@@ -79,6 +79,7 @@
           <el-option label="测试组" value="测试组"></el-option>
           <el-option label="产品组" value="产品组"></el-option>
           <el-option label="业务监控组" value="业务监控组"></el-option>
+          <el-option label="支撑组" value="支撑组"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
