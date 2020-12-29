@@ -68,9 +68,9 @@
             iconCls: 'fa-sitemap',
             children: [
               {
-                name: '表单',
+                name: '需求单&事件单&任务单',
                 url: '/form'
-              }
+              },
             ]
           },
           {

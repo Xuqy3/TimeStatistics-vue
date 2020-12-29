@@ -34,7 +34,7 @@ export default new Router({
         },
         {
           path: '/form',
-          name: '表单',
+          name: '需求单&事件单&任务单',
           component: (resolve) => { require(['@/views/pages/02/form'], resolve) }
         },
         {
