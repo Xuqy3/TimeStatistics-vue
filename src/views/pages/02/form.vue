@@ -67,7 +67,7 @@
         </el-col>
       </el-form-item>
       <el-form-item
-          label="工作量（人）"
+          label="工作量(人)"
           prop="workLoad"
           type="number"
           :rules="[
@@ -321,8 +321,8 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.ruleForm.beginTime = timeTransfer(this.ruleForm.beginTime)
-            this.ruleForm.endTime = timeTransfer(this.ruleForm.endTime)
+            // this.ruleForm.beginTime = timeTransfer(this.ruleForm.beginTime)
+            // this.ruleForm.endTime = timeTransfer(this.ruleForm.endTime)
             this.ruleForm.engineePoint = this.ruleForm.engineePoint[1]
             // console.log(this.ruleForm.engineePoint[1])
             console.log(this.ruleForm)
@@ -378,8 +378,8 @@
         //把字符转为数字
         this.$route.query.currentRow.workLoad = parseInt(this.$route.query.currentRow.workLoad)
         //将字符类型转为时间戳，才能显示在时间选择器上并通过date类型的校验
-        this.$route.query.currentRow.beginTime = new Date(this.$route.query.currentRow.beginTime).getTime()
-        this.$route.query.currentRow.endTime = new Date(this.$route.query.currentRow.endTime).getTime()
+        // this.$route.query.currentRow.beginTime = new Date(this.$route.query.currentRow.beginTime).getTime()
+        // this.$route.query.currentRow.endTime = new Date(this.$route.query.currentRow.endTime).getTime()
         this.$route.query.currentRow.engineePoint = []
         // console.log(new Date(this.$route.query.currentRow.beginTime).getTime())
         this.ruleForm = this.$route.query.currentRow

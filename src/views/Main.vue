@@ -59,7 +59,7 @@
               {
                 name: '表格',
                 url: '/table'
-              }
+              },
             ]
           },
           {
@@ -74,13 +74,13 @@
             ]
           },
           {
-            name: 'Charts',
+            name: 'Report',
             url: '/10',
             iconCls: 'fa-bar-chart',
             children:[
               {
-                name: '图表',
-                url: '/chart'
+                name: '月工作量',
+                url: '/monthtable'
               }
             ]
           }

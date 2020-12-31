@@ -20,6 +20,13 @@ export function search(group){
   })
 }
 
+//获得工作量
+export function getWorkload(){
+  return request({
+    url: '/getWorkload'
+  })
+}
+
 //时间转换
 export function timeTransfer(value){
   if (value==""){

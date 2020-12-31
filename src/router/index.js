@@ -33,15 +33,15 @@ export default new Router({
           component: (resolve) => { require(['@/views/pages/01/table'], resolve) }
         },
         {
+          path: '/monthtable',
+          name: '月工作量',
+          component: (resolve) => { require(['@/views/pages/03/month_table'], resolve) }
+        },
+        {
           path: '/form',
           name: '需求单&事件单&任务单',
           component: (resolve) => { require(['@/views/pages/02/form'], resolve) }
         },
-        {
-          path: '/chart',
-          name: '图表',
-          component: (resolve) => { require(['@/views/pages/03/chart'], resolve) }
-        }
       ]
     },
     {
